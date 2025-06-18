@@ -1,44 +1,50 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <title>Doação para Escolas</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Apoia Class</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <header>
-        <h1>Comunidade Solidária</h1>
-        <nav>
-          <a href="#projeto">O Projeto</a>
-          <a href="#pedidos">Ver Pedidos</a>
-          <a href="#cadastro">Cadastrar Escola</a>
-        </nav>
-      </header>
-    
-      <main>
-        <section id="projeto">
-          <h2>Sobre o Projeto</h2>
-          <p>Conectamos escolas com necessidades de materiais a pessoas da comunidade dispostas a ajudar.</p>
-        </section>
-    
-        <section id="pedidos">
-          <h2>Pedidos das Escolas</h2>
-          <ul id="lista-pedidos">
-            <li>Carregando pedidos...</li>
-          </ul>
-        </section>
-    
-        <section id="cadastro">
-          <h2>Cadastrar Escola</h2>
-          <p>Se você representa uma escola, use o formulário abaixo para registrar suas necessidades.</p>
-          <iframe src="https://docs.google.com/forms/d/e/SEU_LINK_DO_FORM/viewform?embedded=true" width="100%" height="600" frameborder="0">Carregando…</iframe>
-        </section>
-      </main>
-    
-      <footer>
-        <p>&copy; 2025 - Comunidade Solidária</p>
-      </footer>
-    
-      <script src="script.js"></script>
+  <header>
+    <nav>
+      <div class="logo">
+        <a href="index.html" style="font-weight: bold; font-size: 1.2rem;">Apoia Class</a>
+      </div>
+      <br>
+      <div class="menu">
+        <a href="index.html">Início</a>
+        <a href="escolas.html">Escolas</a>
+        <a href="login.html">Login</a>
+        <a href="cadastro.html">Cadastro</a>
+      </div>
+    </nav>
+  </header>
+<br>
+  <main class="container">
+    <h1>Apoia Class</h1>
+    <p>Conectamos escolas e comunidades para facilitar a doação de materiais escolares, livros, equipamentos e muito mais. Juntos, podemos transformar a educação com gestos simples de solidariedade.</p>
+    <div class="buttons">
+      <br><br><br><br>
+      <a href="escolas.html">Ver Lista de Escolas</a>
+      <a href="login.html">Área da Escola (Login)</a>
+      <a href="cadastro.html">Cadastrar Escola</a>
+    </div>
+    <br><br><br><br>
+    <section class="sobre">
+      <h2>Sobre o Projeto</h2>
+      <p>
+        Este projeto tem como objetivo combater a falta de materiais nas escolas por meio da colaboração entre a comunidade e as instituições de ensino. A proposta é que as escolas possam listar os itens de que estão precisando (como materiais escolares, livros, equipamentos ou móveis) e os moradores da região possam visualizar essas necessidades e contribuir com doações, conforme sua disponibilidade.
+      </p>
+    </section>
+  </main>
+
+  <img src="https://images.unsplash.com/photo-1541535193313-a132e126fb1c?q=80&w=2071&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" 
+       alt="Imagem de materiais escolares" width="800" height="400">
+       <br><br><br><br>
+  <footer>
+    © 2025 Apoia Class. Todos os direitos reservados.
+  </footer>
 </body>
 </html>
