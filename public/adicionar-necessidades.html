@@ -78,7 +78,7 @@
     })
     .then(res => res.json())
     .then(escola => {
-      document.getElementById("school_id").value = escola.id;
+      document.getElementById("school_id").value = escola.school_id; // ← CORRIGIDO!
     })
     .catch(err => {
       console.error("Erro ao carregar escola:", err);
