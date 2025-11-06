@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Adicionar Necessidades - Apoia Class</title>
+  <link rel="stylesheet" href="styleescolas.css">
+  <style>
+    main {
+      max-width: 600px;
+      margin: 40px auto;
+      padding: 20px;
+    }
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+    input, textarea, select, button {
+      padding: 10px;
+      font-size: 1rem;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+    button {
+      background-color: #333;
+      color: #fff;
+      border: none;
+      font-weight: bold;
+      transition: background-color 0.3s ease;
+    }
+    button:hover {
+      background-color: #555;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <nav>
+      <div class="logo">
+        <a href="index.html" style="font-weight: bold; font-size: 1.2rem; color: #fff;">Apoia Class</a>
+      </div>
+      <div class="menu">
+        <a href="index.html">Início</a>
+        <a href="escolas.html">Escolas</a>
+        <a href="adicionar-necessidades.html">Necessidades</a>
+        <a href="login.html">Login</a>
+        <a href="cadastro.html">Cadastro</a>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <h1>Adicionar Necessidade</h1>
+
+    <form id="necessidadeForm">
+      <input type="hidden" id="school_id" name="school_id" />
+
+      <label for="item_name">Nome do Item</label>
+      <input type="text" id="item_name" name="item_name" required />
+
+      <label for="quantity">Quantidade</label>
+      <input type="number" id="quantity" name="quantity" required min="1" />
+
+      <label for="description">Descrição (opcional)</label>
+      <textarea id="description" name="description" rows="3"></textarea>
+
+      <button type="submit">Adicionar</button>
+    </form>
+  </main>
+
+  <script>
+    // Carrega escola do usuário logado
+    fetch("/escolas/minha-escola", {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`
+      }
+    })
+    .then(res => res.json())
+    .then(escola => {
+      document.getElementById("school_id").value = escola.id;
+    })
+    .catch(err => {
+      console.error("Erro ao carregar escola:", err);
+      alert("Erro ao carregar dados da escola.");
+    });
+
+    // Envia necessidade
+    document.getElementById("necessidadeForm").addEventListener("submit", function (e) {
+      e.preventDefault();
+
+      const data = {
+        school_id: parseInt(document.getElementById("school_id").value),
+        item_name: document.getElementById("item_name").value.trim(),
+        quantity: parseInt(document.getElementById("quantity").value),
+        description: document.getElementById("description").value.trim()
+      };
+
+      fetch("/necessidades", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`
+        },
+        body: JSON.stringify(data)
+      })
+      .then(res => res.json())
+      .then(response => {
+        alert(response.message || response.error);
+        if (response.message) {
+          document.getElementById("necessidadeForm").reset();
+        }
+      })
+      .catch(err => {
+        console.error("Erro ao adicionar necessidade:", err);
+        alert("Erro ao enviar dados.");
+      });
+    });
+  </script>
+</body>
+</html>

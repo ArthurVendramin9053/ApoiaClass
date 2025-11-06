@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Escolas - Apoia Class</title>
+  <link rel="stylesheet" href="styleescolas.css">
+  <style>
+    .search-container {
+      text-align: center;
+      margin: 20px 0;
+    }
+    .search-input {
+      width: 80%;
+      max-width: 400px;
+      padding: 10px;
+      font-size: 1rem;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+    }
+    .delete-button {
+      margin-left: 10px;
+      padding: 4px 8px;
+      font-size: 0.9rem;
+      background-color: #c00;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .delete-button:hover {
+      background-color: #900;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <nav>
+      <div class="logo">
+        <a href="index.html" style="font-weight: bold; font-size: 1.2rem; color: #fff;">Apoia Class</a>
+      </div>
+      <div class="menu">
+        <a href="index.html">Início</a>
+        <a href="escolas.html">Escolas</a>
+        <a href="adicionar-necessidades.html">Necessidades</a>
+        <a href="login.html">Login</a>
+        <a href="cadastro.html">Cadastro</a>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <h1>Lista de Escolas</h1>
+
+    <div class="search-container">
+      <input type="text" id="searchInput" class="search-input" placeholder="Pesquisar por escola ou cidade..." onkeyup="filtrarEscolas()">
+    </div>
+
+    <div id="schoolList"></div>
+  </main>
+
+  <script>
+    let escolasAgrupadas = {};
+    let escolaLogadaId = null;
+
+    // Carrega a escola logada
+    fetch("/escolas/minha-escola", {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`
+      }
+    })
+    .then(res => res.json())
+    .then(escola => {
+      escolaLogadaId = escola.id;
+      renderizarEscolas();
+    })
+    .catch(() => {
+      escolaLogadaId = null;
+      renderizarEscolas();
+    });
+
+    function renderizarEscolas(filtro = "") {
+      const container = document.getElementById("schoolList");
+      container.innerHTML = "";
+
+      Object.entries(escolasAgrupadas).forEach(([schoolId, escola]) => {
+        const nome = escola.school_name.toLowerCase();
+        const endereco = escola.school_address_short.toLowerCase();
+
+        if (nome.includes(filtro) || endereco.includes(filtro)) {
+          const card = document.createElement("section");
+          card.className = "school-card";
+          card.setAttribute("aria-label", escola.school_name);
+
+          const listaItens = escola.needs.map(need => {
+            const podeExcluir = parseInt(schoolId) === escolaLogadaId;
+            return `
+              <li>
+                ${need.item_name} (${need.quantity}${need.description ? ` – ${need.description}` : ""})
+                ${podeExcluir ? `<button class="delete-button" onclick="excluirNecessidade(${need.need_id})">Excluir</button>` : ""}
+              </li>
+            `;
+          }).join("");
+
+          card.innerHTML = `
+            <h2 class="school-name">${escola.school_name}</h2>
+            <p class="school-address">${escola.school_address_short}</p>
+            <ul class="needs-list">${listaItens}</ul>
+          `;
+
+          container.appendChild(card);
+        }
+      });
+    }
+
+    function filtrarEscolas() {
+      const filtro = document.getElementById("searchInput").value.toLowerCase();
+      renderizarEscolas(filtro);
+    }
+
+    function excluirNecessidade(id) {
+      if (!confirm("Tem certeza que deseja excluir esta necessidade?")) return;
+
+      fetch(`/necessidades/${id}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`
+        }
+      })
+      .then(res => res.json())
+      .then(response => {
+        alert(response.message || response.error);
+        carregarEscolas(); // Atualiza a lista
+      })
+      .catch(err => {
+        console.error("Erro ao excluir:", err);
+        alert("Erro ao excluir necessidade.");
+      });
+    }
+
+    function carregarEscolas() {
+      fetch("/escolas")
+        .then(res => res.json())
+        .then(data => {
+          escolasAgrupadas = {};
+          data.forEach(item => {
+            const id = item.school_id;
+            if (!escolasAgrupadas[id]) {
+              escolasAgrupadas[id] = {
+                school_name: item.school_name,
+                school_address_short: item.school_address_short,
+                needs: []
+              };
+            }
+            escolasAgrupadas[id].needs.push({
+              need_id: item.need_id,
+              item_name: item.item_name,
+              quantity: item.quantity,
+              description: item.description
+            });
+          });
+          renderizarEscolas();
+        })
+        .catch(err => {
+          console.error("Erro ao carregar escolas:", err);
+          document.getElementById("schoolList").innerHTML = "<p>Erro ao carregar dados.</p>";
+        });
+    }
+
+    // Inicializa carregamento
+    carregarEscolas();
+  </script>
+</body>
+</html>
